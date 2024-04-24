@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.9.34701.34
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AuthorizationInterceptor.Extensions.MemoryCache", "src\AuthorizationInterceptor.Extensions.MemoryCache.csproj", "{07E8336C-1F4E-4E9D-BDA5-B93708EE3A86}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AuthorizationInterceptor.Extensions.MemoryCache.Tests", "tests\AuthorizationInterceptor.Extensions.MemoryCache.Tests\AuthorizationInterceptor.Extensions.MemoryCache.Tests.csproj", "{40880E9A-910F-4DD2-9BCB-F138C4E12C62}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{07E8336C-1F4E-4E9D-BDA5-B93708EE3A86}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{07E8336C-1F4E-4E9D-BDA5-B93708EE3A86}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{07E8336C-1F4E-4E9D-BDA5-B93708EE3A86}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{07E8336C-1F4E-4E9D-BDA5-B93708EE3A86}.Release|Any CPU.Build.0 = Release|Any CPU
+		{40880E9A-910F-4DD2-9BCB-F138C4E12C62}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{40880E9A-910F-4DD2-9BCB-F138C4E12C62}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{40880E9A-910F-4DD2-9BCB-F138C4E12C62}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{40880E9A-910F-4DD2-9BCB-F138C4E12C62}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {80FDFB1E-E808-40F1-BCFD-5B070073A762}
+	EndGlobalSection
+EndGlobal
