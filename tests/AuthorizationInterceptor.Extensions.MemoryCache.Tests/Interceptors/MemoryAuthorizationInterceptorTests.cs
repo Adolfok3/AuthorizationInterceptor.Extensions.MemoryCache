@@ -10,7 +10,7 @@ public class MemoryAuthorizationInterceptorTests
 {
     private readonly IMemoryCache _memory;
     private IAuthorizationInterceptor _interceptor;
-    private readonly string CACHE_KEY = "authorization_interceptor_memory_cache_MemoryAuthorizationInterceptor";
+    private readonly string CACHE_KEY = "authorization_interceptor_memory_cache_MemoryAuthorizationInterceptor_test";
 
     public MemoryAuthorizationInterceptorTests()
     {
@@ -22,7 +22,7 @@ public class MemoryAuthorizationInterceptorTests
     public async Task GetHeadersAsync_ShouldReturnNull()
     {
         //Act
-        var headers = await _interceptor.GetHeadersAsync();
+        var headers = await _interceptor.GetHeadersAsync("test");
 
         //Assert
         Assert.Null(headers);
@@ -41,7 +41,7 @@ public class MemoryAuthorizationInterceptorTests
         });
 
         //Act
-        var headers = await _interceptor.GetHeadersAsync();
+        var headers = await _interceptor.GetHeadersAsync("test");
 
         //Assert
         Assert.NotNull(headers);
@@ -55,7 +55,7 @@ public class MemoryAuthorizationInterceptorTests
     public async Task UpdateHeadersAsync_WithNullHeaders_ShouldNotUpdateInMemoryCache()
     {
         //Act
-        Task act() => _interceptor.UpdateHeadersAsync(null, null);
+        Task act() => _interceptor.UpdateHeadersAsync("test", null, null);
 
         //Assert
         Assert.Null(await Record.ExceptionAsync(act));
@@ -66,7 +66,7 @@ public class MemoryAuthorizationInterceptorTests
     public async Task UpdateHeadersAsync_WithHeaders_ShouldUpdateInMemoryCache()
     {
         //Act
-        Task act() => _interceptor.UpdateHeadersAsync(null, new OAuthHeaders("accesstoken", "tokentype"));
+        Task act() => _interceptor.UpdateHeadersAsync("test", null, new OAuthHeaders("accesstoken", "tokentype"));
 
         //Assert
         Assert.Null(await Record.ExceptionAsync(act));

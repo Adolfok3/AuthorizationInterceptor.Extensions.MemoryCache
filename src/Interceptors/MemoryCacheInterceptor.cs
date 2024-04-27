@@ -7,26 +7,26 @@ namespace AuthorizationInterceptor.Extensions.MemoryCache.Interceptors
 {
     internal class MemoryCacheInterceptor : IAuthorizationInterceptor
     {
+        private const string CACHE_KEY = "authorization_interceptor_memory_cache_MemoryAuthorizationInterceptor_{0}";
         private readonly IMemoryCache _memoryCache;
-        private readonly string CACHE_KEY = "authorization_interceptor_memory_cache_MemoryAuthorizationInterceptor";
 
         public MemoryCacheInterceptor(IMemoryCache memoryCache)
         {
             _memoryCache = memoryCache;
         }
 
-        public Task<AuthorizationHeaders?> GetHeadersAsync()
+        public Task<AuthorizationHeaders?> GetHeadersAsync(string name)
         {
-            var headers = _memoryCache.Get<AuthorizationHeaders?>(CACHE_KEY);
+            var headers = _memoryCache.Get<AuthorizationHeaders?>(string.Format(CACHE_KEY, name));
             return Task.FromResult(headers);
         }
 
-        public Task UpdateHeadersAsync(AuthorizationHeaders? _, AuthorizationHeaders? newHeaders)
+        public Task UpdateHeadersAsync(string name, AuthorizationHeaders? _, AuthorizationHeaders? newHeaders)
         {
             if (newHeaders == null)
                 return Task.CompletedTask;
 
-            _memoryCache.Set(CACHE_KEY, newHeaders, new MemoryCacheEntryOptions
+            _memoryCache.Set(string.Format(CACHE_KEY, name), newHeaders, new MemoryCacheEntryOptions
             {
                 AbsoluteExpirationRelativeToNow = newHeaders.GetRealExpiration(),
                 Priority = CacheItemPriority.NeverRemove
