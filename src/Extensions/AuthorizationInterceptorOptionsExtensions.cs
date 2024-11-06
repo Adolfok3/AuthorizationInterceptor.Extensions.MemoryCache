@@ -7,7 +7,7 @@ using System;
 namespace AuthorizationInterceptor.Extensions.MemoryCache
 {
     /// <summary>
-    /// Extension methods that Configures the authorization interceptor to use an in-memory cache interceptor for <see cref="AuthorizationInterceptorOptions"/>
+    /// Extension methods that Configures the authorization interceptor to use an in-memory cache interceptor for <see cref="AuthorizationInterceptor.Extensions.Abstractions.Options.IAuthorizationInterceptorOptions"/>
     /// </summary>
     public static class AuthorizationInterceptorOptionsExtensions
     {
@@ -15,11 +15,11 @@ namespace AuthorizationInterceptor.Extensions.MemoryCache
         /// Configures the authorization interceptor to use an in-memory cache interceptor.
         /// </summary>
         /// <param name="options"><see cref="IAuthorizationInterceptorOptions"/></param>
-        /// <param name="options"><see cref="MemoryCacheOptions"/></param>
+        /// <param name="memoryOptions"><see cref="MemoryCacheOptions"/></param>
         /// <returns><see cref="IAuthorizationInterceptorOptions"/></returns>
         public static IAuthorizationInterceptorOptions UseMemoryCacheInterceptor(this IAuthorizationInterceptorOptions options, Action<MemoryCacheOptions>? memoryOptions = null)
         {
-            memoryOptions ??= (memoryOptions => new MemoryCacheOptions());
+            memoryOptions ??= _ => new MemoryCacheOptions();
             options.UseCustomInterceptor<MemoryCacheInterceptor>(f => f.AddMemoryCache(memoryOptions));
 
             return options;
