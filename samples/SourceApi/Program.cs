@@ -4,6 +4,7 @@ using AuthorizationInterceptor.Extensions.Abstractions.Headers;
 using AuthorizationInterceptor.Extensions.MemoryCache;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using AuthorizationInterceptor.Extensions.MemoryCache.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
