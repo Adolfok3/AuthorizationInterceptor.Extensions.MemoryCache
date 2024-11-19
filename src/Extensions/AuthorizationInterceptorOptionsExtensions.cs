@@ -1,5 +1,7 @@
-﻿using AuthorizationInterceptor.Extensions.Abstractions.Options;
+﻿using System;
+using AuthorizationInterceptor.Extensions.Abstractions.Options;
 using AuthorizationInterceptor.Extensions.MemoryCache.Interceptors;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace AuthorizationInterceptor.Extensions.MemoryCache.Extensions
 {
@@ -12,10 +14,11 @@ namespace AuthorizationInterceptor.Extensions.MemoryCache.Extensions
         /// Configures the authorization interceptor to use a memory cache interceptor.
         /// </summary>
         /// <param name="options"><see cref="IAuthorizationInterceptorOptions"/></param>
+        /// <param name="servicesFunc"><see cref="IServiceCollection"/> to configure additional dependencies if necessary</param>
         /// <returns><see cref="IAuthorizationInterceptorOptions"/></returns>
-        public static IAuthorizationInterceptorOptions UseMemoryCacheInterceptor(this IAuthorizationInterceptorOptions options)
+        public static IAuthorizationInterceptorOptions UseMemoryCacheInterceptor(this IAuthorizationInterceptorOptions options, Func<IServiceCollection, IServiceCollection>? servicesFunc = null)
         {
-            options.UseCustomInterceptor<MemoryCacheInterceptor>();
+            options.UseCustomInterceptor<MemoryCacheInterceptor>(servicesFunc);
             return options;
         }
     }
