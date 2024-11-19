@@ -1,6 +1,6 @@
 ﻿using AuthorizationInterceptor.Extensions.Abstractions.Headers;
-using AuthorizationInterceptor.Extensions.Abstractions.Interceptors;
 using AuthorizationInterceptor.Extensions.MemoryCache.Interceptors;
+using FluentAssertions;
 using Microsoft.Extensions.Caching.Memory;
 using NSubstitute;
 
@@ -8,9 +8,10 @@ namespace AuthorizationInterceptor.Extensions.MemoryCache.Tests.Interceptors;
 
 public class MemoryAuthorizationInterceptorTests
 {
+    private const string CacheKey = "authorization_interceptor_memory_cache_MemoryCacheInterceptor_test";
+
     private readonly IMemoryCache _memory;
-    private IAuthorizationInterceptor _interceptor;
-    private readonly string CACHE_KEY = "authorization_interceptor_memory_cache_MemoryAuthorizationInterceptor_test";
+    private readonly MemoryCacheInterceptor _interceptor;
 
     public MemoryAuthorizationInterceptorTests()
     {
@@ -25,8 +26,8 @@ public class MemoryAuthorizationInterceptorTests
         var headers = await _interceptor.GetHeadersAsync("test");
 
         //Assert
-        Assert.Null(headers);
-        _memory.Received(1).Get<AuthorizationHeaders?>(CACHE_KEY);
+        headers.Should().BeNull();
+        _memory.Received(1).Get<AuthorizationHeaders?>(CacheKey);
     }
 
     [Fact]
@@ -34,7 +35,7 @@ public class MemoryAuthorizationInterceptorTests
     {
         //Arrange
         AuthorizationHeaders obj = new OAuthHeaders("accesstoken", "tokentype");
-        _memory.TryGetValue(CACHE_KEY, out Arg.Any<object?>()).Returns(x =>
+        _memory.TryGetValue(CacheKey, out Arg.Any<object?>()).Returns(x =>
         {
             x[1] = obj;
             return true;
@@ -44,21 +45,21 @@ public class MemoryAuthorizationInterceptorTests
         var headers = await _interceptor.GetHeadersAsync("test");
 
         //Assert
-        Assert.NotNull(headers);
-        Assert.NotNull(headers.OAuthHeaders);
-        Assert.Equal("accesstoken", headers.OAuthHeaders.AccessToken);
-        Assert.Equal("tokentype", headers.OAuthHeaders.TokenType);
-        _memory.Received(1).Get<AuthorizationHeaders?>(CACHE_KEY);
+        headers.Should().NotBeNull();
+        headers!.OAuthHeaders.Should().NotBeNull();
+        headers.OAuthHeaders!.AccessToken.Should().Be("accesstoken");
+        headers.OAuthHeaders.TokenType.Should().Be("tokentype");
+        _memory.Received(1).Get<AuthorizationHeaders?>(CacheKey);
     }
 
     [Fact]
     public async Task UpdateHeadersAsync_WithNullHeaders_ShouldNotUpdateInMemoryCache()
     {
         //Act
-        Task act() => _interceptor.UpdateHeadersAsync("test", null, null);
+        var act = () => _interceptor.UpdateHeadersAsync("test", null, null);
 
         //Assert
-        Assert.Null(await Record.ExceptionAsync(act));
+        await act.Should().NotThrowAsync();
         _memory.Received(0).CreateEntry(Arg.Any<object>());
     }
 
@@ -66,10 +67,10 @@ public class MemoryAuthorizationInterceptorTests
     public async Task UpdateHeadersAsync_WithHeaders_ShouldUpdateInMemoryCache()
     {
         //Act
-        Task act() => _interceptor.UpdateHeadersAsync("test", null, new OAuthHeaders("accesstoken", "tokentype"));
+        var act = () => _interceptor.UpdateHeadersAsync("test", null, new OAuthHeaders("accesstoken", "tokentype"));
 
         //Assert
-        Assert.Null(await Record.ExceptionAsync(act));
+        await act.Should().NotThrowAsync();
         _memory.Received(1).CreateEntry(Arg.Any<object>());
     }
 }

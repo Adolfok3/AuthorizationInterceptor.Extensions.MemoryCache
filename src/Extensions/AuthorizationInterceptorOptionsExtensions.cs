@@ -1,27 +1,24 @@
-﻿using AuthorizationInterceptor.Extensions.Abstractions.Options;
+﻿using System;
+using AuthorizationInterceptor.Extensions.Abstractions.Options;
 using AuthorizationInterceptor.Extensions.MemoryCache.Interceptors;
-using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
-using System;
 
-namespace AuthorizationInterceptor.Extensions.MemoryCache
+namespace AuthorizationInterceptor.Extensions.MemoryCache.Extensions
 {
     /// <summary>
-    /// Extension methods that Configures the authorization interceptor to use an in-memory cache interceptor for <see cref="AuthorizationInterceptorOptions"/>
+    /// Extension methods that Configures the authorization interceptor to use a memory cache interceptor for <see cref="IAuthorizationInterceptorOptions"/>
     /// </summary>
     public static class AuthorizationInterceptorOptionsExtensions
     {
         /// <summary>
-        /// Configures the authorization interceptor to use an in-memory cache interceptor.
+        /// Configures the authorization interceptor to use a memory cache interceptor.
         /// </summary>
         /// <param name="options"><see cref="IAuthorizationInterceptorOptions"/></param>
-        /// <param name="options"><see cref="MemoryCacheOptions"/></param>
+        /// <param name="servicesFunc"><see cref="IServiceCollection"/> to configure additional dependencies if necessary</param>
         /// <returns><see cref="IAuthorizationInterceptorOptions"/></returns>
-        public static IAuthorizationInterceptorOptions UseMemoryCacheInterceptor(this IAuthorizationInterceptorOptions options, Action<MemoryCacheOptions>? memoryOptions = null)
+        public static IAuthorizationInterceptorOptions UseMemoryCacheInterceptor(this IAuthorizationInterceptorOptions options, Func<IServiceCollection, IServiceCollection>? servicesFunc = null)
         {
-            memoryOptions ??= (memoryOptions => new MemoryCacheOptions());
-            options.UseCustomInterceptor<MemoryCacheInterceptor>(f => f.AddMemoryCache(memoryOptions));
-
+            options.UseCustomInterceptor<MemoryCacheInterceptor>(servicesFunc);
             return options;
         }
     }
