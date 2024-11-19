@@ -28,3 +28,4 @@ services.AddHttpClient("TargetApi")
 			options.UseMemoryCacheInterceptor();
 		})
 ```
+> Note: Memory cache is an abstraction that needs to be pre-configured. Please check the official documentation of [Cache in-memory in ASP.NET Core](https://learn.microsoft.com/en-us/aspnet/core/performance/caching/memory)
