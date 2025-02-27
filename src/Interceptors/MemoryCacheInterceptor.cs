@@ -1,6 +1,7 @@
 ﻿using AuthorizationInterceptor.Extensions.Abstractions.Headers;
 using AuthorizationInterceptor.Extensions.Abstractions.Interceptors;
 using Microsoft.Extensions.Caching.Memory;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace AuthorizationInterceptor.Extensions.MemoryCache.Interceptors
@@ -15,16 +16,16 @@ namespace AuthorizationInterceptor.Extensions.MemoryCache.Interceptors
             _memoryCache = memoryCache;
         }
 
-        public async Task<AuthorizationHeaders?> GetHeadersAsync(string name)
+        public ValueTask<AuthorizationHeaders?> GetHeadersAsync(string name, CancellationToken cancellationToken)
         {
             var headers = _memoryCache.Get<AuthorizationHeaders?>(string.Format(CacheKey, name));
-            return await Task.FromResult(headers);
+            return new(headers);
         }
 
-        public Task UpdateHeadersAsync(string name, AuthorizationHeaders? _, AuthorizationHeaders? newHeaders)
+        public ValueTask UpdateHeadersAsync(string name, AuthorizationHeaders? expiredHeaders, AuthorizationHeaders? newHeaders, CancellationToken cancellationToken)
         {
             if (newHeaders == null)
-                return Task.CompletedTask;
+                return ValueTask.CompletedTask;
 
             _memoryCache.Set(string.Format(CacheKey, name), newHeaders, new MemoryCacheEntryOptions
             {
@@ -32,7 +33,7 @@ namespace AuthorizationInterceptor.Extensions.MemoryCache.Interceptors
                 Priority = CacheItemPriority.NeverRemove
             });
 
-            return Task.CompletedTask;
+            return ValueTask.CompletedTask;
         }
     }
 }
