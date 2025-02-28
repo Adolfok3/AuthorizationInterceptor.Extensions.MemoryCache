@@ -18,12 +18,16 @@ namespace AuthorizationInterceptor.Extensions.MemoryCache.Interceptors
 
         public ValueTask<AuthorizationHeaders?> GetHeadersAsync(string name, CancellationToken cancellationToken)
         {
+            cancellationToken.ThrowIfCancellationRequested();
+
             var headers = _memoryCache.Get<AuthorizationHeaders?>(string.Format(CacheKey, name));
             return new(headers);
         }
 
         public ValueTask UpdateHeadersAsync(string name, AuthorizationHeaders? expiredHeaders, AuthorizationHeaders? newHeaders, CancellationToken cancellationToken)
         {
+            cancellationToken.ThrowIfCancellationRequested();
+
             if (newHeaders == null)
                 return ValueTask.CompletedTask;
 
