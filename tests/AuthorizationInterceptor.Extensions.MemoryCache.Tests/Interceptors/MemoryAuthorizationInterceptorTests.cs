@@ -23,7 +23,7 @@ public class MemoryAuthorizationInterceptorTests
     public async Task GetHeadersAsync_ShouldReturnNull()
     {
         //Act
-        var headers = await _interceptor.GetHeadersAsync("test");
+        var headers = await _interceptor.GetHeadersAsync("test", CancellationToken.None);
 
         //Assert
         headers.Should().BeNull();
@@ -42,7 +42,7 @@ public class MemoryAuthorizationInterceptorTests
         });
 
         //Act
-        var headers = await _interceptor.GetHeadersAsync("test");
+        var headers = await _interceptor.GetHeadersAsync("test", CancellationToken.None);
 
         //Assert
         headers.Should().NotBeNull();
@@ -53,24 +53,24 @@ public class MemoryAuthorizationInterceptorTests
     }
 
     [Fact]
-    public async Task UpdateHeadersAsync_WithNullHeaders_ShouldNotUpdateInMemoryCache()
+    public void UpdateHeadersAsync_WithNullHeaders_ShouldNotUpdateInMemoryCache()
     {
         //Act
-        var act = () => _interceptor.UpdateHeadersAsync("test", null, null);
+        var act = () => _interceptor.UpdateHeadersAsync("test", null, null, CancellationToken.None);
 
         //Assert
-        await act.Should().NotThrowAsync();
+        act.Should().NotThrow();
         _memory.Received(0).CreateEntry(Arg.Any<object>());
     }
 
     [Fact]
-    public async Task UpdateHeadersAsync_WithHeaders_ShouldUpdateInMemoryCache()
+    public void UpdateHeadersAsync_WithHeaders_ShouldUpdateInMemoryCache()
     {
         //Act
-        var act = () => _interceptor.UpdateHeadersAsync("test", null, new OAuthHeaders("accesstoken", "tokentype"));
+        var act = () => _interceptor.UpdateHeadersAsync("test", null, new OAuthHeaders("accesstoken", "tokentype"), CancellationToken.None);
 
         //Assert
-        await act.Should().NotThrowAsync();
+        act.Should().NotThrow();
         _memory.Received(1).CreateEntry(Arg.Any<object>());
     }
 }

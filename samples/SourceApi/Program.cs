@@ -1,7 +1,6 @@
 using AuthorizationInterceptor.Extensions;
 using AuthorizationInterceptor.Extensions.Abstractions.Handlers;
 using AuthorizationInterceptor.Extensions.Abstractions.Headers;
-using AuthorizationInterceptor.Extensions.MemoryCache;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using AuthorizationInterceptor.Extensions.MemoryCache.Extensions;
@@ -10,6 +9,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddMemoryCache();
 
 builder.Services.AddHttpClient("TargetApiAuth")
     .ConfigureHttpClient(c => c.BaseAddress = new Uri("http://localhost:5121"));
@@ -66,6 +66,9 @@ public class User
 
     [JsonPropertyName("expires_in")]
     public int ExpiresIn { get; set; }
+
+    [JsonPropertyName("refresh_token_expires_in")]
+    public int RefreshTokenExpiresIn { get; set; }
 }
 
 public class TargetApiAuthClass : IAuthenticationHandler
@@ -77,20 +80,22 @@ public class TargetApiAuthClass : IAuthenticationHandler
         _client = httpClientFactory.CreateClient("TargetApiAuth");
     }
 
-    public async Task<AuthorizationHeaders?> AuthenticateAsync()
+    public async ValueTask<AuthorizationHeaders?> AuthenticateAsync(AuthorizationHeaders? expiredHeaders, CancellationToken cancellation)
     {
-        var response = await _client.PostAsync("auth", null);
-        var content = await response.Content.ReadAsStringAsync();
-        var user = JsonSerializer.Deserialize<User>(content);
-        return new OAuthHeaders(user.AccessToken, user.TokenType, user.ExpiresIn, user.RefreshToken);
-    }
+        HttpResponseMessage? response = null;
 
-    public async Task<AuthorizationHeaders?> UnauthenticateAsync(AuthorizationHeaders? entries)
-    {
-        var response = await _client.PostAsync($"refresh?refresh={entries.OAuthHeaders.RefreshToken}", null);
-        var content = await response.Content.ReadAsStringAsync();
-        var user = JsonSerializer.Deserialize<User>(content);
-        return new OAuthHeaders(user.AccessToken, user.TokenType, user.ExpiresIn, user.RefreshToken);
+        if (expiredHeaders == null)
+        {
+            response = await _client.PostAsync("auth", null, cancellation);
+        }
+        else
+        {
+            response = await _client.PostAsync($"refresh?refresh={expiredHeaders.OAuthHeaders!.RefreshToken}", null, cancellation);
+        }
+
+        var content = await response.Content.ReadAsStringAsync(cancellation);
+        var newHeaders = JsonSerializer.Deserialize<User>(content)!;
+        return new OAuthHeaders(newHeaders.AccessToken, newHeaders.TokenType, newHeaders.ExpiresIn, newHeaders.RefreshToken, newHeaders.RefreshTokenExpiresIn);
     }
 }
 
@@ -103,19 +108,13 @@ public class TargetApiAuthClass2 : IAuthenticationHandler
         _client = httpClientFactory.CreateClient("TargetApiAuth2");
     }
 
-    public async Task<AuthorizationHeaders?> AuthenticateAsync()
+    public async ValueTask<AuthorizationHeaders?> AuthenticateAsync(AuthorizationHeaders? expiredHeaders, CancellationToken cancellation)
     {
-        var response = await _client.PostAsync("auth", null);
-        var content = await response.Content.ReadAsStringAsync();
-        var user = JsonSerializer.Deserialize<User>(content);
-        return new OAuthHeaders(user.AccessToken, user.TokenType, user.ExpiresIn, user.RefreshToken);
-    }
-
-    public async Task<AuthorizationHeaders?> UnauthenticateAsync(AuthorizationHeaders? entries)
-    {
-        var response = await _client.PostAsync($"refresh?refresh={entries.OAuthHeaders.RefreshToken}", null);
-        var content = await response.Content.ReadAsStringAsync();
-        var user = JsonSerializer.Deserialize<User>(content);
-        return new OAuthHeaders(user.AccessToken, user.TokenType, user.ExpiresIn, user.RefreshToken);
+        var response = expiredHeaders != null
+            ? await _client.PostAsync($"refresh?refresh={expiredHeaders.OAuthHeaders!.RefreshToken}", null, cancellation)
+            : await _client.PostAsync("auth", null, cancellation);
+        var content = await response.Content.ReadAsStringAsync(cancellation);
+        var user = JsonSerializer.Deserialize<User>(content)!;
+        return new OAuthHeaders(user.AccessToken, user.TokenType, user.ExpiresIn, user.RefreshToken, user.RefreshTokenExpiresIn);
     }
 }
