@@ -82,12 +82,20 @@ public class TargetApiAuthClass : IAuthenticationHandler
 
     public async ValueTask<AuthorizationHeaders?> AuthenticateAsync(AuthorizationHeaders? expiredHeaders, CancellationToken cancellation)
     {
-        var response = expiredHeaders != null
-            ? await _client.PostAsync($"refresh?refresh={expiredHeaders.OAuthHeaders!.RefreshToken}", null, cancellation)
-            : await _client.PostAsync("login", null, cancellation);
+        HttpResponseMessage? response = null;
+
+        if (expiredHeaders == null)
+        {
+            response = await _client.PostAsync("auth", null, cancellation);
+        }
+        else
+        {
+            response = await _client.PostAsync($"refresh?refresh={expiredHeaders.OAuthHeaders!.RefreshToken}", null, cancellation);
+        }
+
         var content = await response.Content.ReadAsStringAsync(cancellation);
-        var user = JsonSerializer.Deserialize<User>(content)!;
-        return new OAuthHeaders(user.AccessToken, user.TokenType, user.ExpiresIn, user.RefreshToken);
+        var newHeaders = JsonSerializer.Deserialize<User>(content)!;
+        return new OAuthHeaders(newHeaders.AccessToken, newHeaders.TokenType, newHeaders.ExpiresIn, newHeaders.RefreshToken, newHeaders.RefreshTokenExpiresIn);
     }
 }
 
@@ -104,9 +112,9 @@ public class TargetApiAuthClass2 : IAuthenticationHandler
     {
         var response = expiredHeaders != null
             ? await _client.PostAsync($"refresh?refresh={expiredHeaders.OAuthHeaders!.RefreshToken}", null, cancellation)
-            : await _client.PostAsync("login", null, cancellation);
+            : await _client.PostAsync("auth", null, cancellation);
         var content = await response.Content.ReadAsStringAsync(cancellation);
         var user = JsonSerializer.Deserialize<User>(content)!;
-        return new OAuthHeaders(user.AccessToken, user.TokenType, user.ExpiresIn, user.RefreshToken);
+        return new OAuthHeaders(user.AccessToken, user.TokenType, user.ExpiresIn, user.RefreshToken, user.RefreshTokenExpiresIn);
     }
 }

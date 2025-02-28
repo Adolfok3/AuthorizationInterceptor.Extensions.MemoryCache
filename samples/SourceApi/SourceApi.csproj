@@ -7,14 +7,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AuthorizationInterceptor" Version="2.1.0" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.3" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
     <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="8.0.1" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\AuthorizationInterceptor.Extensions.Abstraction\src\AuthorizationInterceptor.Extensions.Abstractions.csproj" />
+    <ProjectReference Include="..\..\..\AuthorizationInterceptor\src\AuthorizationInterceptor.csproj" />
     <ProjectReference Include="..\..\src\AuthorizationInterceptor.Extensions.MemoryCache.csproj" />
   </ItemGroup>
 
