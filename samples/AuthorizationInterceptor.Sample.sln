@@ -9,8 +9,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SourceApi", "SourceApi\Sour
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AuthorizationInterceptor.Extensions.MemoryCache", "..\src\AuthorizationInterceptor.Extensions.MemoryCache.csproj", "{79CC8CD6-71CB-4B38-874D-53045D3867AB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AuthorizationInterceptor", "..\..\AuthorizationInterceptor\src\AuthorizationInterceptor.csproj", "{8DD40C60-E532-2377-F0CA-AC009CA417BC}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -29,10 +27,6 @@ Global
 		{79CC8CD6-71CB-4B38-874D-53045D3867AB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{79CC8CD6-71CB-4B38-874D-53045D3867AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{79CC8CD6-71CB-4B38-874D-53045D3867AB}.Release|Any CPU.Build.0 = Release|Any CPU
-		{8DD40C60-E532-2377-F0CA-AC009CA417BC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8DD40C60-E532-2377-F0CA-AC009CA417BC}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8DD40C60-E532-2377-F0CA-AC009CA417BC}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8DD40C60-E532-2377-F0CA-AC009CA417BC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
